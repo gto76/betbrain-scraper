@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # Usage: betbrain-premier.py [URL or FILE]
-# 
+# Scrapes odds from passed betbrain page.
 
 import sys
 import re
@@ -80,6 +80,10 @@ def getOdds(oddList):
     odd = oddData.find("span", "Odds")
     if odd:
       odds.append(odd.find(text=True))
+      continue
+    param = oddData.find("span", "Param")
+    if param:
+      odds.append(param.find(text=True))
   return odds
 
 if __name__ == '__main__':

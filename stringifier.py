@@ -4,7 +4,7 @@ MATCH_SEP = '\n'
 TEAM_SEP = ' '
 KEY_VALUE_SEP = ':'
 ODDS_SEP = ' '
-ODDS_CATEGORY_SEP = ','
+ODDS_CATEGORY_SEP = ';'
 
 # Converts dictionary to string.
 def matchesToString(matches):
@@ -21,6 +21,8 @@ def matchToString(pair, odds):
 
 # Extracts team names from pair string.
 def getTeams(pair):
+  date = re.search("[-0-9]*$", pair)
+  pair = pair[:date.start()]
   teams = re.search("-v-", pair)
   team1 = pair[:teams.start()]
   team2 = pair[teams.end():]
