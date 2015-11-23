@@ -1,46 +1,77 @@
 #!/usr/bin/python
 #
-# Usage: betbrain-premier.py 
+# Usage: betbrain-premier.py [URL or FILE]
 # 
 
 import sys
 import re
 import collections
+import os
 
-from BeautifulSoup  import BeautifulSoup
-from urllib2 import urlopen
+from BeautifulSoup import BeautifulSoup
+import urllib2
+from cookielib import CookieJar
 
-BASE_URL = "https://www.betbrain.com/"
-URL = "https://www.betbrain.com/football/england/premier-league/#!/matches/"
+DEFAULT_URL = 'https://www.betbrain.com/football/england/premier-league/#!/matches/'
 
+# If no arguments present it parses the default page.
+# Argument can be an URL or a local file.
 def main():
-  # html = urlopen(URL).read()
-  # soup = BeautifulSoup(html, "lxml")
-  soup = BeautifulSoup(open("index.html"))
-  matches = parseSoup(soup)
+  html = ""
+  if len(sys.argv) <= 1:
+    html = scrap(DEFAULT_URL)
+  elif sys.argv[1].startswith("http"):
+    html = scrap(sys.argv[1])
+  else:
+    html = readFile(sys.argv[1])
+  soup = BeautifulSoup(html)
+  matches = getMatches(soup)
   string = matchesToString(matches)
   print(string)
 
-def parseSoup(soup):
-  # Key/value pair example: 
-  #   crystal-palace-fc-v-sunderland -> [[4.40, 3.75, 1.93], ...]
+# Reads webpage.
+def scrap(url):
+  cj = CookieJar()
+  opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+  try:
+    return opener.open(url)
+  except ValueError:
+    print os.path.basename(__file__)+": Invalid URL."
+    sys.exit(1)
+
+def readFile(path):
+  try:
+    return open(path)
+  except IOError:
+    print os.path.basename(__file__)+": Invalid filename."
+    sys.exit(1)
+
+# Returns dictionary of matches. Example of key/value pair:
+#   crystal-palace-fc-v-sunderland -> [[4.40, 3.75, 1.93], ...]
+def getMatches(soup):
   matches = collections.OrderedDict()
   for i in range(1, 4):
     subTab = soup.find("div", "SubTabContent SubTab"+str(i))
     details = subTab.findAll("a", "MDInfo")
     oddLists = subTab.findAll("ol", "OddsList ThreeWay")
     for detail, oddList in zip(details, oddLists):
-      pair = getPair(detail)
-      odds = getOdds(oddList)
-      if pair in matches:
-        matches[pair].append(odds)
-      else:
-        matches[pair] = [odds]
+      addMatch(matches, detail, oddList)
   return matches
 
+# Adds match to the dictionary.
+def addMatch(matches, detail, oddList):
+  pair = getPair(detail)
+  odds = getOdds(oddList)
+  if pair in matches:
+    matches[pair].append(odds)
+  else:
+    matches[pair] = [odds]
+
+# Returns pair of teams.
 def getPair(detail):
   return re.search("[^/]*/$", detail["href"]).group(0).replace('/', '')
 
+# Returns odds as list of lists: [[4.40, 3.75, 1.93], ...]
 def getOdds(oddList):
   odds = []
   for oddData in oddList.findAll("li"):
@@ -49,15 +80,23 @@ def getOdds(oddList):
       odds.append(odd.find(text=True))
   return odds
 
+### TO STRING
+
+MATCH_SEP = '\n'
+TEAM_SEP = ' '
+KEY_VALUE_SEP = ':'
+ODDS_SEP = ' '
+ODDS_CATEGORY_SEP = ','
+
 def matchesToString(matches):
   string = ""
   for pair, odds in matches.items():
-    string += matchToString(pair, odds) + '\n'
+    string += matchToString(pair, odds) + MATCH_SEP
   return string
 
 def matchToString(pair, odds):
   (team1, team2) = getTeams(pair)
-  return team1 +":"+ team2 +";"+ oddsToString(odds)
+  return team1 +TEAM_SEP+ team2 +KEY_VALUE_SEP+ oddsToString(odds)
 
 def getTeams(pair):
   teams = re.search("-v-", pair)
@@ -68,8 +107,8 @@ def getTeams(pair):
 def oddsToString(odds):
   categoryOdds = []
   for odd in odds:
-    categoryOdds.append(' '.join(odd))
-  return ':'.join(categoryOdds)
+    categoryOdds.append(ODDS_SEP.join(odd))
+  return ODDS_CATEGORY_SEP.join(categoryOdds)
     
 if __name__ == '__main__':
   main()
