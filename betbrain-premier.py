@@ -12,6 +12,8 @@ from BeautifulSoup import BeautifulSoup
 import urllib2
 from cookielib import CookieJar
 
+import stringifier
+
 DEFAULT_URL = 'https://www.betbrain.com/football/england/premier-league/#!/matches/'
 
 # If no arguments present it parses the default page.
@@ -26,7 +28,7 @@ def main():
     html = readFile(sys.argv[1])
   soup = BeautifulSoup(html)
   matches = getMatches(soup)
-  string = matchesToString(matches)
+  string = stringifier.matchesToString(matches)
   print(string)
 
 # Reads webpage.
@@ -80,35 +82,5 @@ def getOdds(oddList):
       odds.append(odd.find(text=True))
   return odds
 
-### TO STRING
-
-MATCH_SEP = '\n'
-TEAM_SEP = ' '
-KEY_VALUE_SEP = ':'
-ODDS_SEP = ' '
-ODDS_CATEGORY_SEP = ','
-
-def matchesToString(matches):
-  string = ""
-  for pair, odds in matches.items():
-    string += matchToString(pair, odds) + MATCH_SEP
-  return string
-
-def matchToString(pair, odds):
-  (team1, team2) = getTeams(pair)
-  return team1 +TEAM_SEP+ team2 +KEY_VALUE_SEP+ oddsToString(odds)
-
-def getTeams(pair):
-  teams = re.search("-v-", pair)
-  team1 = pair[:teams.start()]
-  team2 = pair[teams.end():]
-  return (team1, team2)
-
-def oddsToString(odds):
-  categoryOdds = []
-  for odd in odds:
-    categoryOdds.append(ODDS_SEP.join(odd))
-  return ODDS_CATEGORY_SEP.join(categoryOdds)
-    
 if __name__ == '__main__':
   main()
