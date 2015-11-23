@@ -12,7 +12,7 @@ from BeautifulSoup import BeautifulSoup
 import urllib2
 from cookielib import CookieJar
 
-import stringifier
+import util
 
 DEFAULT_URL = 'https://www.betbrain.com/football/england/premier-league/#!/matches/'
 
@@ -28,7 +28,7 @@ def main():
     html = readFile(sys.argv[1])
   soup = BeautifulSoup(html)
   matches = getMatches(soup)
-  string = stringifier.matchesToString(matches)
+  string = util.matchesToString(matches)
   print(string)
 
 # Reads webpage.
