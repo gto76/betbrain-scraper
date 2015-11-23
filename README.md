@@ -7,7 +7,11 @@ How to run on…
 --------------
 
 ### Windows
-
+```
+>pip install BeautifulSoup
+>python betbrain-scraper.py [URL/FILE]
+```
+In order for pip to work, python's scripts dir (C:\Python27\Scripts) needs to be in PATH.
 
 
 ### UNIX
@@ -15,6 +19,3 @@ How to run on…
 $ sudo apt-get install python-beautifulsoup
 $ ./betbrain-scraper.py [URL/FILE]
 ```
-
-
-

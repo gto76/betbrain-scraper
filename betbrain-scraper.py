@@ -63,7 +63,7 @@ def getMatches(soup):
 # Adds match to the dictionary.
 def addMatch(matches, detail, oddList):
   pair = getPair(detail)
-  odds = getOdds(oddList)
+  odds = getSingleCategoryOdds(oddList)
   if pair in matches:
     matches[pair].append(odds)
   else:
@@ -73,8 +73,8 @@ def addMatch(matches, detail, oddList):
 def getPair(detail):
   return re.search("[^/]*/$", detail["href"]).group(0).replace('/', '')
 
-# Returns odds as list of lists: [[4.40, 3.75, 1.93], ...]
-def getOdds(oddList):
+# Returns odds as list of lists: [4.40, 3.75, 1.93]
+def getSingleCategoryOdds(oddList):
   odds = []
   for oddData in oddList.findAll("li"):
     odd = oddData.find("span", "Odds")
