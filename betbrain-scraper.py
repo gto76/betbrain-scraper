@@ -11,6 +11,7 @@ import os
 from BeautifulSoup import BeautifulSoup
 import urllib2
 from cookielib import CookieJar
+from itertools import izip_longest
 
 import util
 
@@ -56,14 +57,18 @@ def getMatches(soup):
     subTab = soup.find("div", "SubTabContent SubTab"+str(i))
     details = subTab.findAll("a", "MDInfo")
     oddLists = subTab.findAll("ol", "OddsList ThreeWay")
-    for detail, oddList in zip(details, oddLists):
+    # for detail, oddList in zip(details, oddLists):
+    for detail, oddList in izip_longest(details, oddLists, fillvalue=u''):
       addMatch(matches, detail, oddList)
   return matches
 
 # Adds match to the dictionary.
 def addMatch(matches, detail, oddList):
   pair = getPair(detail)
-  odds = getSingleCategoryOdds(oddList)
+  if oddList:
+    odds = getSingleCategoryOdds(oddList)
+  else:
+    odds = ''
   if pair in matches:
     matches[pair].append(odds)
   else:
