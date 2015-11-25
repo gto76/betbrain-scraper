@@ -55,11 +55,7 @@ def readFile(path):
 def getMatches(soup):
   matches = collections.OrderedDict()
   for i in range(1, 4):
-    # print(soup.encode("utf-8"))
-    # print(i)
-    # subTab = soup.find("div", ("SubTabContent SubTab"+str(i)))
-    subTab = soup.find("div", "SubTabContent SubTab1")
-    print(subTab)
+    subTab = soup.find("div", "SubTab"+str(i))
     details = subTab.findAll("a", "MDInfo")
     oddLists = subTab.findAll("ol", "OddsList ThreeWay")
     # for detail, oddList in zip(details, oddLists):
