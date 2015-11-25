@@ -31,7 +31,7 @@ def getTeams(pair):
 # Converts odds (list of lists) to string.
 def oddsToString(odds):
   categoryOdds = []
-  for odd in odds:
+  for odd in odds.odds:
     categoryOdds.append(ODDS_SEP.join(odd))
   return ODDS_CATEGORY_SEP.join(categoryOdds)
     

@@ -17,6 +17,10 @@ import util
 
 DEFAULT_URL = 'https://www.betbrain.com/football/england/premier-league/#!/matches/'
 
+class Match:
+  pass
+  bets = collections.OrderedDict()
+
 # If no arguments present it parses the default page.
 # Argument can be an URL or a local file.
 def main():
@@ -28,10 +32,15 @@ def main():
   else:
     html = readFile(sys.argv[1])
   soup = BeautifulSoup(html, "html.parser")
-  # soup = BeautifulSoup(html, from_encoding="utf-8")
   matches = getMatches(soup)
-  string = util.matchesToString(matches)
-  print(string)
+  for pair, match in matches.items():
+    print(pair)
+    print(match.time)
+    print(match.link)
+    print(match.bets)
+    print()
+  #string = util.matchesToString(matches)
+  #print(string)
 
 # Reads webpage.
 def scrap(url):
@@ -54,30 +63,63 @@ def readFile(path):
 #   crystal-palace-fc-v-sunderland -> [[4.40, 3.75, 1.93], ...]
 def getMatches(soup):
   matches = collections.OrderedDict()
+  bets = getBets(soup)
   for i in range(1, 4):
     subTab = soup.find("div", "SubTab"+str(i))
     details = subTab.findAll("a", "MDInfo")
     oddLists = subTab.findAll("ol", "OddsList ThreeWay")
-    # for detail, oddList in zip(details, oddLists):
     for detail, oddList in zip_longest(details, oddLists, fillvalue=''):
-      addMatch(matches, detail, oddList)
+      addMatch(matches, detail, oddList, bets)
   return matches
 
-# Adds match to the dictionary.
-def addMatch(matches, detail, oddList):
-  pair = getPair(detail)
-  if oddList:
-    odds = getSingleCategoryOdds(oddList)
-  else:
-    odds = ''
-  if pair in matches:
-    matches[pair].append(odds)
-  else:
-    matches[pair] = [odds]
+# Returns list of different betting categories: ["AH", "OU", ...]
+def getBets(soup):
+  bbb = []
+  bets = soup.findAll("div", "SMItemContainer")
+  for bet in bets:
+    b = bet.find("a", "OSLink")
+    if not b:
+      b = bet.find("a", "MMHeader")
+    b = re.sub('Switch to the ', '', b['title'])
+    b = re.sub(' detailed bet type', '', b)
+    bbb.append(b)
+  return bbb
 
-# Returns pair of teams.
-def getPair(detail):
+# Adds match to the dictionary.
+def addMatch(matches, detail, oddList, bets):
+  name = getName(detail)
+  
+  if oddList:
+    catOdds = getSingleCategoryOdds(oddList)
+  else:
+    catOdds = ''
+  
+  if name in matches:
+    match = matches[name]
+  else:
+    match = Match()
+    matches[name] = match
+
+  bet = getBet(match, bets)
+  match.bets[bet] = catOdds
+  print(name)
+  print(bet)
+  print(match.bets[bet])
+  match.link = detail["href"]
+  match.time = getTime(detail)
+
+def getBet(match, bets):
+  for bet in bets:
+    if bet not in match.bets:
+      return bet
+
+# Returns match name in form: team1-team2-[optional time].
+def getName(detail):
   return re.search("[^/]*/$", detail["href"]).group(0).replace('/', '')
+
+# Returns start date of the match.
+def getTime(detail):
+  return detail.find("span", "Setting DateTime").find(text=True)
 
 # Returns odds as list of lists: [4.40, 3.75, 1.93]
 def getSingleCategoryOdds(oddList):
