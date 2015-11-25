@@ -8,10 +8,10 @@ import re
 import collections
 import os
 
-from BeautifulSoup import BeautifulSoup
-import urllib2
-from cookielib import CookieJar
-from itertools import izip_longest
+from bs4 import BeautifulSoup
+import urllib.request
+from http.cookiejar import CookieJar
+from itertools import zip_longest
 
 import util
 
@@ -27,7 +27,8 @@ def main():
     html = scrap(sys.argv[1])
   else:
     html = readFile(sys.argv[1])
-  soup = BeautifulSoup(html)
+  soup = BeautifulSoup(html, "html.parser")
+  # soup = BeautifulSoup(html, from_encoding="utf-8")
   matches = getMatches(soup)
   string = util.matchesToString(matches)
   print(string)
@@ -35,18 +36,18 @@ def main():
 # Reads webpage.
 def scrap(url):
   cj = CookieJar()
-  opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+  opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
   try:
     return opener.open(url)
   except ValueError:
-    print os.path.basename(__file__)+": Invalid URL."
+    print((os.path.basename(__file__)+": Invalid URL."))
     sys.exit(1)
 
 def readFile(path):
   try:
-    return open(path)
+    return open(path, encoding='utf8')
   except IOError:
-    print os.path.basename(__file__)+": Invalid filename."
+    print((os.path.basename(__file__)+": Invalid filename."))
     sys.exit(1)
 
 # Returns dictionary of matches. Example of key/value pair:
@@ -54,11 +55,15 @@ def readFile(path):
 def getMatches(soup):
   matches = collections.OrderedDict()
   for i in range(1, 4):
-    subTab = soup.find("div", "SubTabContent SubTab"+str(i))
+    # print(soup.encode("utf-8"))
+    # print(i)
+    # subTab = soup.find("div", ("SubTabContent SubTab"+str(i)))
+    subTab = soup.find("div", "SubTabContent SubTab1")
+    print(subTab)
     details = subTab.findAll("a", "MDInfo")
     oddLists = subTab.findAll("ol", "OddsList ThreeWay")
     # for detail, oddList in zip(details, oddLists):
-    for detail, oddList in izip_longest(details, oddLists, fillvalue=u''):
+    for detail, oddList in zip_longest(details, oddLists, fillvalue=''):
       addMatch(matches, detail, oddList)
   return matches
 
