@@ -41,11 +41,13 @@ def getBetNames(soup):
 # Adds match to the dictionary.
 def addMatch(matches, matchDetails, bet, betNames):
   match = getMatch(matches, matchDetails)
-  betsName = getBetsName(match, betNames)
-  odds = getOdds(bet)
-  match.bets[betsName] = odds
   match.link = getLink(matchDetails)
   match.time = getTime(matchDetails)
+  odds = getOdds(bet)
+  if not odds:
+    return
+  betsName = getBetsName(match, betNames)
+  match.bets[betsName] = odds
 
 # Returns existin match from matches or creates new one.
 def getMatch(matches, matchDetails):
@@ -61,11 +63,13 @@ def getMatch(matches, matchDetails):
 def getMatchName(matchDetails):
   return re.search("[^/]*/$", matchDetails["href"]).group(0).replace('/', '')
 
-# Returns the bet category: "Asian Handicap".
-def getBetsName(match, betNames):
-  for betName in betNames:
-    if betName not in match.bets:
-      return betName
+# Returns link to the matche's page.
+def getLink(matchDetails):
+  return matchDetails["href"]
+
+# Returns start date of the match.
+def getTime(matchDetails):
+  return matchDetails.find("span", "Setting DateTime").find(text=True)
 
 # Returns bet's odds in list: [4.40, 3.75, 1.93].
 def getOdds(bet):
@@ -82,10 +86,8 @@ def getOdds(bet):
       odds.append(param.find(text=True))
   return odds
 
-# Returns link to the matche's page.
-def getLink(matchDetails):
-  return matchDetails["href"]
-
-# Returns start date of the match.
-def getTime(matchDetails):
-  return matchDetails.find("span", "Setting DateTime").find(text=True)
+# Returns the bet category: "Asian Handicap".
+def getBetsName(match, betNames):
+  for betName in betNames:
+    if betName not in match.bets:
+      return betName
