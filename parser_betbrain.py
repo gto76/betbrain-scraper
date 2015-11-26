@@ -17,8 +17,11 @@ class Match:
 def getMatches(soup):
   matches = collections.OrderedDict()
   betNames = getBetNames(soup)
-  for i in range(1, 4):
-    bettingCategory = soup.find("div", "SubTab"+str(i))
+
+  bettingCategories = soup.findAll("div", "SubTabContent")
+  for bettingCategory in bettingCategories:
+  # for i in range(1, 4):
+    # bettingCategory = soup.find("div", "SubTab"+str(i))
     detailsOfMatches = bettingCategory.findAll("a", "MDInfo")
     bets = bettingCategory.findAll("ol", "OddsList ThreeWay")
     for matchDetails, bet in zip_longest(detailsOfMatches, bets, fillvalue=''):
