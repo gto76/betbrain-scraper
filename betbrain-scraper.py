@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # Usage: betbrain-premier.py [URL or FILE]
 # Scrapes odds from passed betbrain page.
