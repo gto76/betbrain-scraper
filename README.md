@@ -10,12 +10,12 @@ How to run on…
 ### Windows
 ```
 >pip install BeautifulSoup4
->py betbrain-scraper.py [URL/FILE]
+>py betbrain.py [URL/FILE]
 ```
 In order for pip to work, python's Scripts dir needs to be in PATH.
 
 ### UNIX
 ```
 $ sudo apt-get install python-bs4
-$ ./betbrain-scraper.py [URL/FILE]
+$ ./betbrain.py [URL/FILE]
 ```

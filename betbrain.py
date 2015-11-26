@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import urllib.request
 from http.cookiejar import CookieJar
 
-import parser
+import parser_betbrain
 import printer
 
 DEFAULT_URL = 'https://www.betbrain.com/football/england/premier-league/#!/matches/'
@@ -20,7 +20,7 @@ DEFAULT_URL = 'https://www.betbrain.com/football/england/premier-league/#!/match
 def main():
   html = getHtml(sys.argv)
   soup = BeautifulSoup(html, "html.parser")
-  matches = parser.getMatches(soup)
+  matches = parser_betbrain.getMatches(soup)
   string = printer.matchesToString(matches)
   print(string)
 
