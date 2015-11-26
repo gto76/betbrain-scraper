@@ -4,6 +4,8 @@ import collections
 from bs4 import BeautifulSoup
 from itertools import zip_longest
 
+BASE_URL = "https://www.betbrain.com"
+
 class Match:
   def __init__(self):
     self.bets = collections.OrderedDict()
@@ -65,7 +67,7 @@ def getMatchName(matchDetails):
 
 # Returns link to the matche's page.
 def getLink(matchDetails):
-  return matchDetails["href"]
+  return BASE_URL + matchDetails["href"]
 
 # Returns start date of the match.
 def getTime(matchDetails):
