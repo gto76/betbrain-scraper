@@ -18,8 +18,8 @@ import util
 DEFAULT_URL = 'https://www.betbrain.com/football/england/premier-league/#!/matches/'
 
 class Match:
-  pass
-  bets = collections.OrderedDict()
+  def __init__(self):
+    self.bets = collections.OrderedDict()
 
 # If no arguments present it parses the default page.
 # Argument can be an URL or a local file.
@@ -33,14 +33,8 @@ def main():
     html = readFile(sys.argv[1])
   soup = BeautifulSoup(html, "html.parser")
   matches = getMatches(soup)
-  for pair, match in matches.items():
-    print(pair)
-    print(match.time)
-    print(match.link)
-    print(match.bets)
-    print()
-  #string = util.matchesToString(matches)
-  #print(string)
+  string = util.matchesToString(matches)
+  print(string)
 
 # Reads webpage.
 def scrap(url):
@@ -102,9 +96,6 @@ def addMatch(matches, detail, oddList, bets):
 
   bet = getBet(match, bets)
   match.bets[bet] = catOdds
-  print(name)
-  print(bet)
-  print(match.bets[bet])
   match.link = detail["href"]
   match.time = getTime(detail)
 
