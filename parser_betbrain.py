@@ -12,16 +12,15 @@ class Match:
 
 ### PUBLIC:
 
-# Returns dictionary with match name for key and Match object for value:
-#   crystal-palace-fc-v-sunderland -> {link: http://.., time: 12:09.., {AH: [4.40, 3.75, 1.93], ...}}
+# Returns dictionary with match name for key and Match object
+# for value:
+#   crystal-palace-fc-v-sunderland -> {link: http://.., time:
+#   12:09.., {AH: [4.40, 3.75, 1.93], ...}}
 def getMatches(soup):
   matches = collections.OrderedDict()
   betNames = getBetNames(soup)
-
   bettingCategories = soup.findAll("div", "SubTabContent")
   for bettingCategory in bettingCategories:
-  # for i in range(1, 4):
-    # bettingCategory = soup.find("div", "SubTab"+str(i))
     detailsOfMatches = bettingCategory.findAll("a", "MDInfo")
     bets = bettingCategory.findAll("ol", "OddsList ThreeWay")
     for matchDetails, bet in zip_longest(detailsOfMatches, bets, fillvalue=''):
@@ -30,7 +29,8 @@ def getMatches(soup):
 
 ### PRIVATE:
 
-# Returns list of different betting categories: ["Away Home", "Asian Handicap", ...]
+# Returns list of different betting categories: ["Away Home",
+# "Asian Handicap", ...]
 def getBetNames(soup):
   names = []
   betNamesContainers = soup.findAll("div", "SMItemContainer")

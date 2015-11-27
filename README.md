@@ -19,3 +19,13 @@ In order for pip to work, python's Scripts dir needs to be in PATH.
 $ sudo apt-get install python-bs4
 $ ./betbrain.py [URL/FILE]
 ```
+
+Benchmarks
+----------
+
+### v6
+```
+python3 scrape-all.py test-urls.txt
+--- 204.26561331748962 seconds ---
+```
+
