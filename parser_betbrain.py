@@ -47,6 +47,7 @@ def getBetNames(soup):
 def addMatch(matches, matchDetails, bet, betNames):
   match = getMatch(matches, matchDetails)
   match.link = getLink(matchDetails)
+  match.name = getName(matchDetails)
   match.time = getTime(matchDetails)
   odds = getOdds(bet)
   if not odds:
@@ -56,21 +57,26 @@ def addMatch(matches, matchDetails, bet, betNames):
 
 # Returns existin match from matches or creates new one.
 def getMatch(matches, matchDetails):
-  matchName = getMatchName(matchDetails)
-  if matchName in matches:
-    return matches[matchName]
+  matchId = getMatchId(matchDetails)
+  if matchId in matches:
+    return matches[matchId]
   else:
     match = Match()
-    matches[matchName] = match
+    matches[matchId] = match
     return match
 
 # Returns match name in form: team1-team2-[optional time].
-def getMatchName(matchDetails):
+def getMatchId(matchDetails):
   return re.search("[^/]*/$", matchDetails["href"]).group(0).replace('/', '')
 
 # Returns link to the matche's page.
 def getLink(matchDetails):
   return BASE_URL + matchDetails["href"]
+
+# Returns matche's name.
+def getName(matchDetails):
+  name = re.sub('See ', '', matchDetails["title"])
+  return re.sub(' match page', '', name)
 
 # Returns start date of the match.
 def getTime(matchDetails):
