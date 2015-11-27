@@ -14,7 +14,7 @@ def main():
     lines = file.readlines()
   startTime = time.time()
   for line in lines:
-    command = "python3 betbrain.py " + line.rstrip()
+    command = "python betbrain.py " + line.rstrip()
     print(command)
     os.system(command)
   print("==================================")
