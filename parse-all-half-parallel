@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# Usage: parse-all-half-parallel FILE-WITH-URLS SIMULTANEOUS-LINKS
+# Downloads pages in a loop, and parses the in subshells.
+
+# Stops execution if any command fails.
+set -eo pipefail
+
+TMP_DIR='/tmp/odds-scraper/'
+OUT_DIR='results/'
+
+batch() {
+  while read -r url; do
+    echo "$url"
+    filename=$(echo "$url" | sed 's/^.*\///' | tr -d '\r\n')
+    ./betbrain.py "$url" | head & #> "$OUT_DIR$filename"
+  done <<< "$1"
+}
+
+main() {
+  mkdir "$TMP_DIR" 2> /dev/null || true 
+  mkdir "$OUT_DIR" 2> /dev/null || true 
+
+  noOfLines=$(wc -l urls | grep -o '^[0-9]*')
+  i=1
+  while [[ "$i" -lt "$noOfLines" ]]; do
+    to=$((i + $2 - 1))
+    urls=$(sed -n "$i","$to"p "$1")
+    i=$((i + $2))
+    batch "$urls"
+    wait
+  done
+}
+
+main "$@"

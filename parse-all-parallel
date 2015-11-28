@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Usage: parse-all-fast
+# Downloads pages in a loop, and parses the in subshells.
+
+# Stops execution if any command fails.
+set -eo pipefail
+
+TMP_DIR='/tmp/odds-scraper/'
+OUT_DIR='results/'
+
+main() {
+  mkdir "$TMP_DIR" 2> /dev/null || true 
+  mkdir "$OUT_DIR" 2> /dev/null || true 
+  while read url; do 
+    filename=$(echo "$url" | sed 's/^.*\///' | tr -d '\r\n')
+    echo "$url"
+    echo "$filename"
+    ./betbrain.py "$url" | head & #> "$OUT_DIR$filename"
+  done < "$1" 
+  wait
+}
+
+main "$@"

@@ -80,7 +80,7 @@ def getName(matchDetails):
 
 # Returns start date of the match.
 def getTime(matchDetails):
-  return matchDetails.find("span", "Setting DateTime").find(text=True)
+  return matchDetails.find("span", "DateTime").find(text=True)
 
 # Returns bet's odds in list: [4.40, 3.75, 1.93].
 def getOdds(bet):
