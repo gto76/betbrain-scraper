@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 #
-# Usage: premier.py [URL or FILE] [OUTPUT-FILE]
-# Scrapes odds from passed betbrain page and writes them to stdout, or file if specified.
+# Usage: betbrain.py [URL or FILE] [OUTPUT-FILE]
+# Scrapes odds from passed betbrain page and writes them to
+# stdout, or file if specified.
 
 import sys
 import os

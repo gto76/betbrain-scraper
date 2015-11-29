@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 #
 # Usage: paralel-scrape.py URLS-FILE [OUTPUT-DIR] [NUM-OF-SUBPROCESSES]
-# Scrapes all sites listed in URLS-FILE and writes results in OUTPUT-DIR. At the end it prints the execution
-# time.
+# Scrapes all sites listed in URLS-FILE and saves results in
+# OUTPUT-DIR. At the end it prints the execution time.
 
 import sys
 import os

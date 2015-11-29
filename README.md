@@ -10,22 +10,26 @@ How to run on…
 ### Windows
 ```
 >pip install BeautifulSoup4
->py betbrain.py [URL/FILE]
+>py betbrain.py
 ```
 In order for pip to work, python's Scripts dir needs to be in PATH.
 
 ### UNIX
 ```
 $ sudo apt-get install python3-bs4
-$ ./betbrain.py [URL/FILE]
+$ ./betbrain.py
 ```
 
-Benchmarks
-----------
+Scripts
+-------
+### betbrain.py
 
-### v6
-```
-python3 scrape-all.py test-urls.txt
---- 204.26561331748962 seconds ---
-```
+`Usage: betbrain.py [URL or FILE] [OUTPUT-FILE]`  
 
+Scrapes odds from passed betbrain page and writes them to stdout, or file if specified.
+
+### paralel-scrape.py
+
+`Usage: paralel-scrape.py URLS-FILE [OUTPUT-DIR] [NUM-OF-SUBPROCESSES]` 
+
+Scrapes all sites listed in URLS-FILE and saves results in OUTPUT-DIR. At the end it prints the execution time.
