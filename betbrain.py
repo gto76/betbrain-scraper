@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
-# Usage: premier.py [URL or FILE]
-# Scrapes odds from passed betbrain page.
+# Usage: premier.py [URL or FILE] [OUTPUT-FILE]
+# Scrapes odds from passed betbrain page and writes them to stdout, or file if specified.
 
 import sys
 import os
@@ -22,7 +22,7 @@ def main():
   soup = BeautifulSoup(html, "html.parser")
   matches = parser_betbrain.getMatches(soup)
   string = printer.matchesToString(matches)
-  print(string)
+  output(string, sys.argv)
 
 def getHtml(argv):
   if len(argv) <= 1:
@@ -39,14 +39,29 @@ def scrap(url):
   try:
     return opener.open(url)
   except ValueError:
-    print((os.path.basename(__file__)+": Invalid URL."))
+    print((os.path.basename(__file__)+": Invalid URL."), file=sys.stderr)
     sys.exit(1)
 
 def readFile(path):
   try:
     return open(path, encoding='utf8')
   except IOError:
-    print((os.path.basename(__file__)+": Invalid filename."))
+    print((os.path.basename(__file__)+": Invalid input filename."), file=sys.stderr)
+    sys.exit(1)
+
+def output(string, argv):
+  if len(argv) <= 2:
+    print(string, encoding='utf8')
+  else:
+    writeFile(argv[2], string)
+
+def writeFile(path, string):
+  try:  
+    fo = open(path, "w", encoding='utf8')
+    fo.write(string);
+    fo.close()
+  except IOError:
+    print((os.path.basename(__file__)+": Invalid output filename: "+path), file=sys.stderr)
     sys.exit(1)
 
 if __name__ == '__main__':
