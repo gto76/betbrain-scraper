@@ -16,7 +16,7 @@ In order for pip to work, python's Scripts dir needs to be in PATH.
 
 ### UNIX
 ```
-$ sudo apt-get install python-bs4
+$ sudo apt-get install python3-bs4
 $ ./betbrain.py [URL/FILE]
 ```
 
