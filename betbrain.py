@@ -52,7 +52,7 @@ def readFile(path):
 
 def output(string, argv):
   if len(argv) <= 2:
-    print(string, encoding='utf8')
+    print(string)
   else:
     writeFile(argv[2], string)
 
