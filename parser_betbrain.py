@@ -1,5 +1,5 @@
-import re
 import collections
+import re
 
 from bs4 import BeautifulSoup
 from itertools import zip_longest

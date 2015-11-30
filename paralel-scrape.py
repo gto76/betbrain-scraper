@@ -4,23 +4,23 @@
 # Scrapes all sites listed in URLS-FILE and saves results in
 # OUTPUT-DIR. At the end it prints the execution time.
 
-import sys
+from datetime import datetime
 import os
 import re
-import time
+import sys
 import subprocess
-from datetime import datetime
+import time
 
 DEFAULT_OUTPUT_DIR = "results"
 DEFAULT_CHUNK_SIZE = 8
 
 def main():
   startTime = time.time()
-  start(sys.argv)
+  run(sys.argv)
   print("==================================")
   print("--- %s seconds ---" % (time.time() - startTime))
 
-def start(argv):
+def run(argv):
   interpreter = getInterpreter()
   urls = getUrls(argv)
   outputDir = getOutputDir(argv)
@@ -60,18 +60,22 @@ def splitList(list, chunkLength):
 def batchProcess(chunk, interpreter, outputDir):
   subprocesses = []
   for url in chunk:
-    url = url.rstrip()
-    filename = getFilename(url, outputDir)
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    command = [ interpreter, "betbrain.py", url, filename]
-    print(' '.join(command))
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocesses.append(process)
+    p = getSubprocess(url, outputDir, interpreter)
+    subprocesses.append(p)
   for p in subprocesses:
-    out, err = p.communicate()
-    if err:
-      print(err.decode('unicode_escape'))
-    # EX: printOut(out)
+    waitForSubprocess(p)
+
+def getSubprocess(url, outputDir, interpreter):
+  url = url.rstrip()
+  command = getCommand(url, outputDir, interpreter)
+  print(' '.join(command))
+  return subprocess.Popen(command, stdout=subprocess.PIPE, 
+                          stderr=subprocess.PIPE)
+
+def getCommand(url, outputDir, interpreter):
+  filename = getFilename(url, outputDir)
+  os.makedirs(os.path.dirname(filename), exist_ok=True)
+  return [ interpreter, "betbrain.py", url, filename]
 
 def getFilename(url, outputDir):
   time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -80,6 +84,12 @@ def getFilename(url, outputDir):
   game = re.sub('/', '_', game)
   return outputDir+"/"+game+"_"+time+".txt"
 
+def waitForSubprocess(p):
+  out, err = p.communicate()
+  if err:
+    print(err.decode('unicode_escape'))
+  # EX: printOut(out)
+
 # def printOut(out):
 #   string = out.decode('unicode_escape')
 #   head = string.splitlines()[1:10]
@@ -87,4 +97,3 @@ def getFilename(url, outputDir):
 
 if __name__ == '__main__':
   main()
-

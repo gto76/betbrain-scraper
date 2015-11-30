@@ -4,11 +4,11 @@
 # Scrapes odds from passed betbrain page and writes them to
 # stdout, or file if specified.
 
-import sys
 import os
+import sys
+import urllib.request
 
 from bs4 import BeautifulSoup
-import urllib.request
 from http.cookiejar import CookieJar
 
 import parser_betbrain
@@ -40,15 +40,13 @@ def scrap(url):
   try:
     return opener.open(url)
   except ValueError:
-    print((os.path.basename(__file__)+": Invalid URL."), file=sys.stderr)
-    sys.exit(1)
+    error("Invalid URL: " + url)
 
 def readFile(path):
   try:
     return open(path, encoding='utf8')
   except IOError:
-    print((os.path.basename(__file__)+": Invalid input filename."), file=sys.stderr)
-    sys.exit(1)
+    error("Invalid input filename: " + path)
 
 def output(string, argv):
   if len(argv) <= 2:
@@ -62,8 +60,12 @@ def writeFile(path, string):
     fo.write(string);
     fo.close()
   except IOError:
-    print((os.path.basename(__file__)+": Invalid output filename: "+path), file=sys.stderr)
-    sys.exit(1)
+    error("Invalid output filename: " + path)
+
+def error(msg):
+  msg = os.path.basename(__file__)+": "+msg
+  print(msg, file=sys.stderr)
+  sys.exit(1)
 
 if __name__ == '__main__':
   main()
