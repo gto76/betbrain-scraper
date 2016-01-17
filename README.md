@@ -1,5 +1,5 @@
-Odds Scraper
-============
+Betbrain Scraper
+================
 
 Python scripts for scraping odds from betting websites.
 Runs on Python3 and needs BeautifulSoup4 library.
